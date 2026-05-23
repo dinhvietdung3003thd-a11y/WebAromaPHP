@@ -5,6 +5,11 @@ use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\ClientOrderController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\InventoryController;
+use App\Http\Controllers\Api\InventoryTransactionController;
+use App\Http\Controllers\Api\RecipeController;
+use App\Http\Controllers\Api\SupplierController;
+use App\Http\Controllers\Api\TableController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/health', function () {
@@ -51,4 +56,37 @@ Route::middleware(['custom.jwt', 'jwt.token_version', 'role:Admin,Staff'])->grou
     Route::put('/Orders/{id}', [OrderController::class, 'update'])->whereNumber('id');
     Route::put('/Orders/{id}/status', [OrderController::class, 'updateStatus'])->whereNumber('id');
     Route::delete('/Orders/{id}', [OrderController::class, 'destroy'])->whereNumber('id');
+
+    Route::post('/Inventory', [InventoryController::class, 'store']);
+    Route::put('/Inventory/{id}', [InventoryController::class, 'update'])->whereNumber('id');
+    Route::delete('/Inventory/{id}', [InventoryController::class, 'destroy'])->whereNumber('id');
+
+    Route::post('/InventoryTransaction', [InventoryTransactionController::class, 'store']);
+
+    Route::post('/Recipe', [RecipeController::class, 'store']);
+    Route::put('/Recipe/{id}', [RecipeController::class, 'update'])->whereNumber('id');
+    Route::delete('/Recipe/{id}', [RecipeController::class, 'destroy'])->whereNumber('id');
+
+    Route::post('/Supplier', [SupplierController::class, 'store']);
+    Route::put('/Supplier/{id}', [SupplierController::class, 'update'])->whereNumber('id');
+    Route::delete('/Supplier/{id}', [SupplierController::class, 'destroy'])->whereNumber('id');
+
+    Route::post('/Tables', [TableController::class, 'store']);
+    Route::put('/Tables/{id}', [TableController::class, 'update'])->whereNumber('id');
+    Route::delete('/Tables/{id}', [TableController::class, 'destroy'])->whereNumber('id');
 });
+
+
+Route::get('/Inventory', [InventoryController::class, 'index']);
+Route::get('/Inventory/{id}', [InventoryController::class, 'show'])->whereNumber('id');
+
+Route::get('/InventoryTransaction', [InventoryTransactionController::class, 'index']);
+
+Route::get('/Recipe', [RecipeController::class, 'index']);
+Route::get('/Recipe/{id}', [RecipeController::class, 'show'])->whereNumber('id');
+
+Route::get('/Supplier', [SupplierController::class, 'index']);
+Route::get('/Supplier/{id}', [SupplierController::class, 'show'])->whereNumber('id');
+
+Route::get('/Tables', [TableController::class, 'index']);
+Route::get('/Tables/{id}', [TableController::class, 'show'])->whereNumber('id');
