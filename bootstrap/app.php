@@ -17,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'jwt.auth' => \App\Http\Middleware\JwtAuthenticate::class,
+            'custom.jwt' => \App\Http\Middleware\JwtAuthenticate::class,
             'role' => \App\Http\Middleware\AuthorizeRole::class,
             'jwt.token_version' => \App\Http\Middleware\ValidateTokenVersion::class,
         ]);
