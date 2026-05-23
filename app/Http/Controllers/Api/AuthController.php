@@ -46,30 +46,35 @@ class AuthController extends Controller
     }
 
     public function me(Request $request): JsonResponse
-    {
-        $user = $request->attributes->get('auth_user');
-        $payload = $request->attributes->get('auth_payload');
-        $role = $payload->get('role');
+{
+    $user = $request->attributes->get('auth_user');
+    $payload = $request->attributes->get('auth_payload');
 
-        if ($user instanceof User) {
-            return response()->json([
-                'userId' => $user->user_id,
-                'fullName' => $user->full_name,
-                'role' => $role,
-            ]);
-        }
-
-        if ($user instanceof Customer) {
-            return response()->json([
-                'customerId' => $user->customer_id,
-                'fullName' => $user->full_name,
-                'loyaltyPoints' => (int) ($user->loyalty_points ?? $user->points ?? 0),
-                'role' => $role,
-            ]);
-        }
-
+    if (! $payload) {
         return response()->json(['message' => 'Unauthorized'], 401);
     }
+
+    $role = $payload->get('role');
+
+    if ($user instanceof User) {
+        return response()->json([
+            'userId' => $user->user_id,
+            'fullName' => $user->full_name,
+            'role' => $role,
+        ]);
+    }
+
+    if ($user instanceof Customer) {
+        return response()->json([
+            'customerId' => $user->customer_id,
+            'fullName' => $user->full_name,
+            'loyaltyPoints' => (int) ($user->loyalty_points ?? $user->points ?? 0),
+            'role' => $role,
+        ]);
+    }
+
+    return response()->json(['message' => 'Unauthorized'], 401);
+}
 
     public function changePassword(ChangePasswordRequest $request): JsonResponse
     {

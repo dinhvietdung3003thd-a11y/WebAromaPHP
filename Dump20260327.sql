@@ -370,8 +370,8 @@ LOCK TABLES `users` WRITE;
 INSERT INTO `users`
 (`user_id`, `username`, `password_hash`, `token_version`, `full_name`, `role`, `phone_number`, `is_active`, `created_at`, `updated_at`)
 VALUES
-(1,'dinn','a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',0,'dung','Admin','12356547657',1,'2026-02-26 08:37:54','2026-02-26 08:37:54'),
-(2,'dinn1','$2a$11$JcSZI8s1Aw8sRYKfs4C5dOK.at3wAIxwq5P.f1rF3KIEaUhsZ.Yqq',0,'dung','Admin','231412342',1,'2026-03-18 08:11:16','2026-03-18 08:11:16');
+(1,'dinn','$2y$12$.u/zbUfj4GAK31yW2fLi7.F9UBA6saoTSHjlPm.5cuiMZd5bnft82',0,'dung','Admin','12356547657',1,'2026-02-26 08:37:54','2026-02-26 08:37:54'),
+(2,'dinn1','$2y$12$.u/zbUfj4GAK31yW2fLi7.F9UBA6saoTSHjlPm.5cuiMZd5bnft82',0,'dung','Admin','231412342',1,'2026-03-18 08:11:16','2026-03-18 08:11:16');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
