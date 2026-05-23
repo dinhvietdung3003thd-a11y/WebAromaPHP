@@ -156,3 +156,47 @@ GET:
 - Keep database compatibility
 - Keep API compatibility
 - Reuse existing Docker services where possible
+
+# Docker Quick Start
+
+## 1) Build and start services
+
+```bash
+docker compose up --build -d
+```
+
+This starts:
+- `laravel-api` on `http://localhost:8000`
+- `mysql` on `127.0.0.1:3307` (container `3306`)
+- `elasticsearch` on `http://localhost:9200`
+
+## 2) Database initialization
+
+MySQL is initialized from the root SQL dump file:
+- `Dump20260327.sql` -> `/docker-entrypoint-initdb.d/Dump20260327.sql`
+
+Database settings:
+- Database: `aromacafedb`
+- Username: `root`
+- Password: `123456`
+
+> Note: the SQL dump runs automatically only on the first MySQL startup with an empty data volume.
+
+## 3) Check logs
+
+```bash
+docker compose logs -f laravel-api
+```
+
+## 4) Stop services
+
+```bash
+docker compose down
+```
+
+If you need to re-run SQL initialization from scratch:
+
+```bash
+docker compose down -v
+```
+
