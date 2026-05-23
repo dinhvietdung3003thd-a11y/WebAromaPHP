@@ -17,11 +17,11 @@ class CustomerAuthService
             throw new HttpException(401, 'Unauthorized');
         }
 
-        $token = JWTAuth::fromUser($customer, [
+        $token = JWTAuth::claims([
             'user_type' => 'customer',
             'role' => 'Customer',
             'token_version' => $customer->token_version ?? 0,
-        ]);
+        ])->fromUser($customer);
 
         return [
             'customerId' => $customer->customer_id,

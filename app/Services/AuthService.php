@@ -21,12 +21,12 @@ class AuthService
             throw new HttpException(403, 'Forbidden');
         }
 
-        $token = JWTAuth::fromUser($user, [
+        $token = JWTAuth::claims([
             'user_type' => 'user',
             'role' => $user->role,
             'token_version' => $user->token_version ?? 0,
-        ]);
-
+        ])->fromUser($user);
+        
         return [
             'userId' => $user->user_id,
             'fullName' => $user->full_name,
