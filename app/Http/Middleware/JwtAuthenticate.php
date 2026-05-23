@@ -24,7 +24,7 @@ class JwtAuthenticate
             JWTAuth::setToken($token);
             $payload = JWTAuth::getPayload();
 
-           $userType = $payload->get('user_type');
+            $userType = $payload->get('user_type');
             $subjectId = $payload->get('sub');
 
             $user = match ($userType) {
@@ -33,12 +33,12 @@ class JwtAuthenticate
                 default => null,
             };
         } catch (Throwable $e) {
-    throw new HttpException(401, $e->getMessage());
-}
+            throw new HttpException(401, 'Unauthorized');
+        }
 
         if (! $user) {
-    throw new HttpException(401, 'User not found. user_type=' . $userType . ', sub=' . $subjectId);
-}
+            throw new HttpException(401, 'Unauthorized');
+        }
 
         $request->attributes->set('auth_user', $user);
         $request->attributes->set('auth_payload', $payload);
