@@ -1,0 +1,50 @@
+services:
+  laravel-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: laravel-api
+    ports:
+      - "8000:8000"
+    environment:
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_URL: http://localhost:8000
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: aromacafedb
+      DB_USERNAME: root
+      DB_PASSWORD: 123456
+      ELASTICSEARCH_HOST: http://elasticsearch:9200
+    depends_on:
+      - mysql
+      - elasticsearch
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_DATABASE: aromacafedb
+      MYSQL_ROOT_PASSWORD: 123456
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./Dump20260327.sql:/docker-entrypoint-initdb.d/Dump20260327.sql:ro
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
+    container_name: elasticsearch
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: "false"
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+
+volumes:
+  mysql_data:
+  es_data:
