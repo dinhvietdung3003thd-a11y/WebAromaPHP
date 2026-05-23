@@ -14,8 +14,8 @@ class ElasticsearchService
 
     public function __construct()
     {
-        $host = (string) env('ELASTICSEARCH_HOST', 'http://localhost:9200');
-        $this->index = (string) env('ELASTICSEARCH_PRODUCT_INDEX', 'products');
+        $host = (string) config('elasticsearch.host', env('ELASTICSEARCH_HOST', 'http://localhost:9200'));
+        $this->index = (string) config('elasticsearch.product_index', env('ELASTICSEARCH_PRODUCT_INDEX', 'products'));
         $this->client = ClientBuilder::create()->setHosts([$host])->build();
     }
 

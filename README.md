@@ -92,6 +92,15 @@ Database:
 
 ## Sync products to Elasticsearch
 
+Set the Elasticsearch host in `.env` (or keep default):
+
+```env
+ELASTICSEARCH_HOST=http://localhost:9200
+ELASTICSEARCH_PRODUCT_INDEX=products
+```
+
+Run:
+
 ```bash
 php artisan elastic:sync-products
 ```
