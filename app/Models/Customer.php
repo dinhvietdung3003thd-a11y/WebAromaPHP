@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class Customer extends Model
+class Customer extends Authenticatable implements JWTSubject
 {
     protected $table = 'customers';
 
@@ -32,6 +33,16 @@ class Customer extends Model
         'loyalty_points' => 'integer',
         'created_at' => 'datetime',
     ];
+
+    public function getJWTIdentifier(): mixed
+    {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims(): array
+    {
+        return [];
+    }
 
     public function orders(): HasMany
     {
