@@ -1,0 +1,24 @@
+<?php
+
+namespace App\Http\Requests\Supplier;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class UpdateSupplierRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    public function rules(): array
+    {
+        return [
+            'name' => ['sometimes', 'string', 'max:255'],
+            'contactName' => ['sometimes', 'nullable', 'string', 'max:100'],
+            'phone' => ['sometimes', 'nullable', 'string', 'max:20'],
+            'email' => ['sometimes', 'nullable', 'email', 'max:100'],
+            'address' => ['sometimes', 'nullable', 'string'],
+        ];
+    }
+}
