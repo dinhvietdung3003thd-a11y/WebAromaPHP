@@ -52,7 +52,7 @@ class ElasticsearchService
 
     public function searchProducts(string $keyword): array
     {
-        $keyword = trim($keyword);
+        $keyword = mb_strtolower(trim($keyword));
         if ($keyword === '') {
             return [];
         }
@@ -61,10 +61,9 @@ class ElasticsearchService
             'index' => $this->index,
             'body' => [
                 'query' => [
-                    'multi_match' => [
-                        'query' => $keyword,
-                        'fields' => ['name^3', 'description', 'categoryName^2'],
-                        'type' => 'best_fields',
+                    'bool' => [
+                        'should' => $this->buildSearchShouldClauses($keyword),
+                        'minimum_should_match' => 1,
                     ],
                 ],
             ],
@@ -86,6 +85,72 @@ class ElasticsearchService
                 'description' => $source['description'] ?? null,
             ];
         }, $hits);
+    }
+
+    private function buildSearchShouldClauses(string $keyword): array
+    {
+        $should = [
+            [
+                'match_phrase_prefix' => [
+                    'name' => [
+                        'query' => $keyword,
+                        'boost' => 5,
+                    ],
+                ],
+            ],
+            [
+                'match' => [
+                    'name' => [
+                        'query' => $keyword,
+                        'boost' => 3,
+                    ],
+                ],
+            ],
+            [
+                'match' => [
+                    'description' => [
+                        'query' => $keyword,
+                        'boost' => 1,
+                    ],
+                ],
+            ],
+            [
+                'match' => [
+                    'categoryName' => [
+                        'query' => $keyword,
+                        'boost' => 1,
+                    ],
+                ],
+            ],
+        ];
+
+        $wildcardClause = [
+            'wildcard' => [
+                'name.keyword' => [
+                    'value' => '*'.$keyword.'*',
+                    'boost' => 2,
+                    'case_insensitive' => true,
+                ],
+            ],
+        ];
+
+        if (mb_strlen($keyword) <= 2) {
+            $should[] = [
+                'prefix' => [
+                    'name' => [
+                        'value' => $keyword,
+                        'boost' => 4,
+                    ],
+                ],
+            ];
+            $should[] = $wildcardClause;
+
+            return $should;
+        }
+
+        $should[] = $wildcardClause;
+
+        return $should;
     }
 
     private function toDocument(Product $product): array
