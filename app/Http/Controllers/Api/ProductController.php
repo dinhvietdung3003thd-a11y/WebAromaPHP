@@ -9,6 +9,7 @@ use App\Services\ElasticsearchService;
 use App\Services\ProductService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Throwable;
 
 class ProductController extends Controller
 {
@@ -51,6 +52,13 @@ class ProductController extends Controller
     {
         $keyword = $request->query('keyword', '');
 
-        return response()->json($this->elasticsearchService->searchProducts((string) $keyword));
+        try {
+            return response()->json($this->elasticsearchService->searchProducts((string) $keyword));
+        } catch (Throwable $exception) {
+            return response()->json([
+                'message' => 'Elasticsearch service is unavailable',
+                'error' => $exception->getMessage(),
+            ], 503);
+        }
     }
 }
