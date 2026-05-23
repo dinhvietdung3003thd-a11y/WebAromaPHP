@@ -77,6 +77,12 @@ cp .env.example .env
 php artisan key:generate
 ```
 
+## Generate JWT secret
+
+```bash
+php artisan jwt:secret
+```
+
 ---
 
 # Database
@@ -209,3 +215,104 @@ If you need to re-run SQL initialization from scratch:
 docker compose down -v
 ```
 
+
+
+# API Testing Quick Guide (Thunder Client / Postman)
+
+Use `{{baseUrl}} = http://localhost:8000/api` and placeholders only:
+- `{{adminToken}}` = `<ADMIN_JWT_TOKEN>`
+- `{{customerToken}}` = `<CUSTOMER_JWT_TOKEN>`
+
+## 1) Admin login
+
+`POST {{baseUrl}}/Auth/login`
+
+```json
+{
+  "username": "<ADMIN_USERNAME>",
+  "password": "<ADMIN_PASSWORD>"
+}
+```
+
+## 2) Customer login
+
+`POST {{baseUrl}}/Auth/customer/login`
+
+```json
+{
+  "username": "<CUSTOMER_USERNAME>",
+  "password": "<CUSTOMER_PASSWORD>"
+}
+```
+
+## 3) Auth me
+
+`GET {{baseUrl}}/Auth/me` with header `Authorization: Bearer {{adminToken}}`
+
+## 4) Create order (Admin/Staff)
+
+`POST {{baseUrl}}/Orders` with header `Authorization: Bearer {{adminToken}}`
+
+```json
+{
+  "orderDate": "2026-05-23T10:00:00",
+  "tableId": 1,
+  "note": "No ice",
+  "details": [
+    { "productId": 1, "quantity": 2 }
+  ]
+}
+```
+
+## 5) Create order (Customer)
+
+`POST {{baseUrl}}/client/orders` with header `Authorization: Bearer {{customerToken}}`
+
+```json
+{
+  "orderDate": "2026-05-23T10:00:00",
+  "tableId": null,
+  "note": "Less sugar",
+  "details": [
+    { "productId": 1, "quantity": 1 }
+  ]
+}
+```
+
+## 6) Inventory import/export
+
+`POST {{baseUrl}}/InventoryTransaction` with header `Authorization: Bearer {{adminToken}}`
+
+Import example:
+```json
+{
+  "inventoryId": 1,
+  "type": "Import",
+  "quantity": 10,
+  "note": "Restock"
+}
+```
+
+Export example:
+```json
+{
+  "inventoryId": 1,
+  "type": "Export",
+  "quantity": 2,
+  "note": "Usage"
+}
+```
+
+## 7) Recipe duplicate validation
+
+Send duplicate `productId` + `inventoryId` via `POST {{baseUrl}}/Recipe` and verify a clean `422` JSON response.
+
+## 8) Customer forbidden on admin route
+
+Call `POST {{baseUrl}}/Product` using `Authorization: Bearer {{customerToken}}` and verify `403` JSON:
+
+```json
+{
+  "message": "Forbidden"
+}
+```

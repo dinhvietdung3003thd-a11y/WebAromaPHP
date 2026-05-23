@@ -6,6 +6,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -31,12 +32,24 @@ return Application::configure(basePath: dirname(__DIR__))
         });
 
         $exceptions->render(function (HttpExceptionInterface $exception) {
-            if (in_array($exception->getStatusCode(), [401, 403], true)) {
-                return response()->json([
-                    'message' => $exception->getMessage() ?: ($exception->getStatusCode() === 401 ? 'Unauthorized' : 'Forbidden'),
-                ], $exception->getStatusCode());
+            if ($exception->getStatusCode() === 401) {
+                return response()->json(['message' => 'Unauthorized'], 401);
+            }
+
+            if ($exception->getStatusCode() === 403) {
+                return response()->json(['message' => 'Forbidden'], 403);
             }
 
             return null;
+        });
+
+        $exceptions->render(function (NotFoundHttpException $exception) {
+            if ($exception->getPrevious() instanceof HttpExceptionInterface) {
+                return null;
+            }
+
+            return response()->json([
+                'message' => 'Not found',
+            ], 404);
         });
     })->create();

@@ -57,7 +57,6 @@ class ProductController extends Controller
         } catch (Throwable $exception) {
             return response()->json([
                 'message' => 'Elasticsearch service is unavailable',
-                'error' => $exception->getMessage(),
             ], 503);
         }
     }
